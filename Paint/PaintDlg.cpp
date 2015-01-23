@@ -204,11 +204,6 @@ void CPaintDlg::OnLButtonUp(UINT nFlags, CPoint point)
 
 		endP = point;
 		isPressed = false;
-		//!!2
-		//if(nFlags==MK_CONTROL)
-		//	figs.push_back(new RectangleM(startP.x,startP.y,endP.x,endP.y));
-		//else
-		//	figs.push_back(new EllipseM(startP.x,startP.y,endP.x,endP.y));
 		switch (futureFigKIND)
 		{
 		case RECTANGLE:
@@ -221,13 +216,7 @@ void CPaintDlg::OnLButtonUp(UINT nFlags, CPoint point)
 			break;
 		}
 		Invalidate();
-		//!!1
-		//why commented?
-		//r.left=min(startP.x,endP.x);
-		//r.right=max(startP.x,endP.x)+1;
-		//r.top=min(startP.y,endP.y);
-		//r.bottom=max(startP.y,endP.y)+1;
-		//InvalidateRect(&r);
+
 	}
 
 	CDialog::OnLButtonUp(nFlags, point);
@@ -237,28 +226,15 @@ void CPaintDlg::OnMouseMove(UINT nFlags, CPoint point)
 	// TODO: Add your message handler code here and/or call default
 	if (isPressed)
 	{
-		//!!4  
 
-		//local drawing with CClientDC 
-
-		//////!!1
-		//////CHANGES (disables flickering)
-		//////		Invalidate();
-
-		////RECT r;
-		////r.left=min(startP.x,endP.x);
-		////r.right=max(startP.x,endP.x)+1;
-		////r.top=min(startP.y,endP.y);
-		////r.bottom=max(startP.y,endP.y)+1;
-		////InvalidateRect(&r);
 
 		CClientDC dc(this);
 
 		CBrush myBrush, *oldBrush;
-		myBrush.CreateSolidBrush(RGB(0, 255, 0));
+		myBrush.CreateSolidBrush(RGB(277, 277, 277));
 		oldBrush = dc.SelectObject(&myBrush);
 
-		CPen myPen1(PS_SOLID, 3, RGB(255, 0, 0));
+		CPen myPen1(PS_SOLID, 3, RGB(0, 0, 0));
 		CPen *oldPen;
 		oldPen = dc.SelectObject(&myPen1);
 		dc.SetROP2(R2_NOTXORPEN);
@@ -266,25 +242,6 @@ void CPaintDlg::OnMouseMove(UINT nFlags, CPoint point)
 		dc.Rectangle(startP.x, startP.y, endP.x, endP.y);
 		endP = point;
 		dc.Rectangle(startP.x, startP.y, endP.x, endP.y);
-		////!!!!
-		////Better...!!!!
-		////!!!!
-		//switch(futureFigKIND)
-		//{
-		//case RECTANGLE:
-		//	dc.Rectangle(startP.x, startP.y,endP.x, endP.y);
-		//	endP=point;
-		//	dc.Rectangle(startP.x, startP.y,endP.x, endP.y);
-		//	break;
-		//case ELLIPSE:
-		//	dc.Ellipse(startP.x, startP.y,endP.x, endP.y);
-		//	endP=point;
-		//	dc.Ellipse(startP.x, startP.y,endP.x, endP.y);
-		//	break;
-		//}
-		//!!!!
-		//make EVEN better...!!!!  MAYBE NOT HERE
-		//!!!!
 
 		dc.SelectObject(oldPen);
 		dc.SetROP2(R2_COPYPEN);
