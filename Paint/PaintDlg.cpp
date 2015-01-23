@@ -64,6 +64,12 @@ BEGIN_MESSAGE_MAP(CPaintDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_WM_LBUTTONDOWN()
+	ON_WM_LBUTTONUP()
+	ON_WM_MOUSEMOVE()
+	ON_BN_CLICKED(IDC_RADIO1, &CPaintDlg::OnBnClickedRadio1)
+	ON_BN_CLICKED(IDC_RADIO2, &CPaintDlg::OnBnClickedRadio2)
+	ON_BN_CLICKED(IDC_RADIO3, &CPaintDlg::OnBnClickedRadio3)
 END_MESSAGE_MAP()
 
 
@@ -98,6 +104,7 @@ BOOL CPaintDlg::OnInitDialog()
 	SetIcon(m_hIcon, TRUE);			// Set big icon
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
+	CheckRadioButton(IDC_RADIO1, IDC_RADIO3, IDC_RADIO1);
 	// TODO: Add extra initialization here
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
@@ -174,7 +181,8 @@ void CPaintDlg::OnPaint()
 //  the minimized window.
 HCURSOR CPaintDlg::OnQueryDragIcon()
 {
-	return static_cast<HCURSOR>(m_hIcon);
+	//return static_cast<HCURSOR>(m_hIcon);
+	return (HCURSOR)m_hIcon;
 }
 
 void CPaintDlg::OnLButtonDown(UINT nFlags, CPoint point)
@@ -185,6 +193,7 @@ void CPaintDlg::OnLButtonDown(UINT nFlags, CPoint point)
 	isPressed = true;
 
 	CDialog::OnLButtonDown(nFlags, point);
+
 }
 
 void CPaintDlg::OnLButtonUp(UINT nFlags, CPoint point)
@@ -222,4 +231,85 @@ void CPaintDlg::OnLButtonUp(UINT nFlags, CPoint point)
 	}
 
 	CDialog::OnLButtonUp(nFlags, point);
+}
+void CPaintDlg::OnMouseMove(UINT nFlags, CPoint point)
+{
+	// TODO: Add your message handler code here and/or call default
+	if (isPressed)
+	{
+		//!!4  
+
+		//local drawing with CClientDC 
+
+		//////!!1
+		//////CHANGES (disables flickering)
+		//////		Invalidate();
+
+		////RECT r;
+		////r.left=min(startP.x,endP.x);
+		////r.right=max(startP.x,endP.x)+1;
+		////r.top=min(startP.y,endP.y);
+		////r.bottom=max(startP.y,endP.y)+1;
+		////InvalidateRect(&r);
+
+		CClientDC dc(this);
+
+		CBrush myBrush, *oldBrush;
+		myBrush.CreateSolidBrush(RGB(0, 255, 0));
+		oldBrush = dc.SelectObject(&myBrush);
+
+		CPen myPen1(PS_SOLID, 3, RGB(255, 0, 0));
+		CPen *oldPen;
+		oldPen = dc.SelectObject(&myPen1);
+		dc.SetROP2(R2_NOTXORPEN);
+
+		dc.Rectangle(startP.x, startP.y, endP.x, endP.y);
+		endP = point;
+		dc.Rectangle(startP.x, startP.y, endP.x, endP.y);
+		////!!!!
+		////Better...!!!!
+		////!!!!
+		//switch(futureFigKIND)
+		//{
+		//case RECTANGLE:
+		//	dc.Rectangle(startP.x, startP.y,endP.x, endP.y);
+		//	endP=point;
+		//	dc.Rectangle(startP.x, startP.y,endP.x, endP.y);
+		//	break;
+		//case ELLIPSE:
+		//	dc.Ellipse(startP.x, startP.y,endP.x, endP.y);
+		//	endP=point;
+		//	dc.Ellipse(startP.x, startP.y,endP.x, endP.y);
+		//	break;
+		//}
+		//!!!!
+		//make EVEN better...!!!!  MAYBE NOT HERE
+		//!!!!
+
+		dc.SelectObject(oldPen);
+		dc.SetROP2(R2_COPYPEN);
+
+
+		dc.SelectObject(oldBrush);
+
+	}
+	CDialog::OnMouseMove(nFlags, point);
+}
+
+void CPaintDlg::OnBnClickedRadio1()
+{
+	// TODO: Add your control notification handler code here
+	futureFigKIND = RECTANGLE;
+}
+
+void CPaintDlg::OnBnClickedRadio2()
+{
+	// TODO: Add your control notification handler code here
+	futureFigKIND = ELLIPSE;
+}
+
+void CPaintDlg::OnBnClickedRadio3()
+{
+	// TODO: Add your control notification handler code here
+	futureFigKIND = SEGMENT;
 }
