@@ -9,6 +9,8 @@
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 
 
@@ -120,6 +122,31 @@ void CPaintDlg::OnSysCommand(UINT nID, LPARAM lParam)
 
 void CPaintDlg::OnPaint()
 {
+	CRect rect;
+	GetClientRect(&rect);
+
+	CFont font;
+	font.CreatePointFont(500, _T("Arial"));
+
+	CPaintDC dc(this);
+	CFont *oldFont = dc.SelectObject(&font);
+	dc.SetBkMode(TRANSPARENT);
+
+	dc.SelectObject(oldFont);
+	//!!2
+	//1st
+	for (int i = 0; i<figs.GetSize(); i++)
+		figs[i]->Draw(&dc);
+	//if creation
+	if (isPressed)
+	{
+		dc.MoveTo(startP.x, startP.y);
+		dc.LineTo(startP.x, endP.y);
+		dc.LineTo(endP.x, endP.y);
+		dc.LineTo(endP.x, startP.y);
+		dc.LineTo(startP.x, startP.y);
+	}
+
 	if (IsIconic())
 	{
 		CPaintDC dc(this); // device context for painting
@@ -150,3 +177,49 @@ HCURSOR CPaintDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+void CPaintDlg::OnLButtonDown(UINT nFlags, CPoint point)
+{
+	// TODO: Add your message handler code here and/or call default
+	//!!4: added endP= 
+	endP = startP = point;
+	isPressed = true;
+
+	CDialog::OnLButtonDown(nFlags, point);
+}
+
+void CPaintDlg::OnLButtonUp(UINT nFlags, CPoint point)
+{
+	// TODO: Add your message handler code here and/or call default
+	if (isPressed)
+	{
+
+		endP = point;
+		isPressed = false;
+		//!!2
+		//if(nFlags==MK_CONTROL)
+		//	figs.push_back(new RectangleM(startP.x,startP.y,endP.x,endP.y));
+		//else
+		//	figs.push_back(new EllipseM(startP.x,startP.y,endP.x,endP.y));
+		switch (futureFigKIND)
+		{
+		case RECTANGLE:
+			//!!6 instead of .push_back
+			figs.Add(new RectangleM(startP.x, startP.y, endP.x, endP.y));
+			break;
+		case ELLIPSE:
+			//!!6
+			figs.Add(new EllipseM(startP.x, startP.y, endP.x, endP.y));
+			break;
+		}
+		Invalidate();
+		//!!1
+		//why commented?
+		//r.left=min(startP.x,endP.x);
+		//r.right=max(startP.x,endP.x)+1;
+		//r.top=min(startP.y,endP.y);
+		//r.bottom=max(startP.y,endP.y)+1;
+		//InvalidateRect(&r);
+	}
+
+	CDialog::OnLButtonUp(nFlags, point);
+}

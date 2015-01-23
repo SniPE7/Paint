@@ -109,6 +109,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Figure.cpp" />
     <ClCompile Include="Paint.cpp" />
     <ClCompile Include="PaintDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -118,9 +119,6 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Paint.rc" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="res\Paint.rc2" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\Paint.ico" />

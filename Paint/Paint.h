@@ -1,8 +1,12 @@
 
 // Paint.h : main header file for the PROJECT_NAME application
 //
+#if !defined(AFX_DLG_H__A7561E47_8B22_413E_8611_6D285DD57136__INCLUDED_)
+#define AFX_DLG_H__A7561E47_8B22_413E_8611_6D285DD57136__INCLUDED_
 
+#if _MSC_VER > 1000
 #pragma once
+#endif // _MSC_VER > 1000
 
 #ifndef __AFXWIN_H__
 	#error "include 'stdafx.h' before including this file for PCH"
@@ -30,3 +34,5 @@ public:
 };
 
 extern CPaintApp theApp;
+
+#endif

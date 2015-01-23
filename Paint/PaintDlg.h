@@ -1,13 +1,35 @@
 
 // PaintDlg.h : header file
 //
+#if !defined(AFX_DLGDLG_H__D02F91E6_1066_4AA4_AE0B_1D16C986AE2C__INCLUDED_)
+#define AFX_DLGDLG_H__D02F91E6_1066_4AA4_AE0B_1D16C986AE2C__INCLUDED_
 
+#if _MSC_VER > 1000
 #pragma once
+#endif // _MSC_VER > 1000
 
-
+#include <vector>
+#include "Figure.h"
+using namespace std;
 // CPaintDlg dialog
 class CPaintDlg : public CDialogEx
 {
+	//!!2
+	enum FIGURES{ RECTANGLE, ELLIPSE, SEGMENT };
+	FIGURES futureFigKIND;
+
+	// added s
+	Figure *f;
+	//!!6 b
+	//vector <Figure *> figs;
+	CTypedPtrArray< CObArray, Figure*> figs;
+	//!!6 e
+
+	bool isPressed;
+	CPoint startP;
+	CPoint endP;
+	// added e
+	// Construction
 // Construction
 public:
 	CPaintDlg(CWnd* pParent = NULL);	// standard constructor
@@ -30,3 +52,5 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 };
+
+#endif
