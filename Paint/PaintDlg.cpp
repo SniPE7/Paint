@@ -70,6 +70,7 @@ BEGIN_MESSAGE_MAP(CPaintDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_RADIO1, &CPaintDlg::OnBnClickedRadio1)
 	ON_BN_CLICKED(IDC_RADIO2, &CPaintDlg::OnBnClickedRadio2)
 	ON_BN_CLICKED(IDC_RADIO3, &CPaintDlg::OnBnClickedRadio3)
+	ON_COMMAND(ID_FILE_EXITALT, &CPaintDlg::OnFileExitalt)
 END_MESSAGE_MAP()
 
 
@@ -107,6 +108,12 @@ BOOL CPaintDlg::OnInitDialog()
 	CheckRadioButton(IDC_RADIO1, IDC_RADIO3, IDC_RADIO1);
 	// TODO: Add extra initialization here
 
+	// Load the menu resource
+	if (!m_menu.LoadMenu(IDR_MENU1))
+		AfxThrowResourceException();
+
+	// Set the menu
+	SetMenu(&m_menu);
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
 
@@ -238,11 +245,21 @@ void CPaintDlg::OnMouseMove(UINT nFlags, CPoint point)
 		CPen *oldPen;
 		oldPen = dc.SelectObject(&myPen1);
 		dc.SetROP2(R2_NOTXORPEN);
-
-		dc.Rectangle(startP.x, startP.y, endP.x, endP.y);
 		endP = point;
-		dc.Rectangle(startP.x, startP.y, endP.x, endP.y);
-
+		switch (futureFigKIND)
+		{
+		case RECTANGLE:
+			dc.Rectangle(startP.x, startP.y, endP.x, endP.y);
+			endP = point;
+			dc.Rectangle(startP.x, startP.y, endP.x, endP.y);
+			break;
+		case ELLIPSE:
+			//dc.Rectangle(startP.x, startP.y, endP.x, endP.y);
+			dc.Ellipse(startP.x, startP.y, endP.x, endP.y);
+			endP = point;
+			dc.Ellipse(startP.x, startP.y, endP.x, endP.y);
+			break;
+		}
 		dc.SelectObject(oldPen);
 		dc.SetROP2(R2_COPYPEN);
 
@@ -269,4 +286,9 @@ void CPaintDlg::OnBnClickedRadio3()
 {
 	// TODO: Add your control notification handler code here
 	futureFigKIND = SEGMENT;
+}
+
+void CPaintDlg::OnFileExitalt()
+{
+	// TODO: Add your command handler code here
 }

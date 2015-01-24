@@ -44,6 +44,7 @@ public:
 // Implementation
 protected:
 	HICON m_hIcon;
+	CMenu m_menu;
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
@@ -51,7 +52,7 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-	DECLARE_MESSAGE_MAP()
+	DECLARE_MESSAGE_MAP();
 
 public:
 	afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
@@ -59,6 +60,7 @@ public:
 	afx_msg void OnBnClickedRadio1();
 	afx_msg void OnBnClickedRadio2();
 	afx_msg void OnBnClickedRadio3();
+	afx_msg void OnFileExitalt();
 };
 
 #endif
