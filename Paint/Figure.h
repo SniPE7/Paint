@@ -35,6 +35,7 @@ public:
 protected:
 public:
 	int x1, y1, x2, y2;//!!7 //,KIND;
+	//int color;
 	Figure();
 	Figure(int xx1, int yy1, int xx2, int yy2)
 	{
@@ -45,13 +46,16 @@ public:
 	}
 	//!!5 for Serialization
 	// NOT PURE !!!  
+	Figure(const Figure &); // copy constuctor
+	const Figure &operator=(const Figure &); // assign function
+
 	virtual void Draw(CDC *dc){}
 	virtual ~Figure(void);
-};
 
+};
 class RectangleM :public Figure{
 	//!!5 b
-	DECLARE_SERIAL(RectangleM)   //!!! NO ";"     
+	//DECLARE_SERIAL(RectangleM)   //!!! NO ";"     
 	//!!5 e
 public:
 	RectangleM(); //!!5 must 
@@ -60,11 +64,16 @@ public:
 	{
 		//!!7 //KIND=0;
 	}
+
+	RectangleM(const RectangleM &); // copy constuctor
+	const RectangleM &operator=(const RectangleM &); // assign function
+
 	void Draw(CDC *dc)
 	{
 		dc->Rectangle(x1, y1, x2, y2);
 	}
 };
+
 class EllipseM :public Figure{
 	//!!5 b
 	DECLARE_SERIAL(EllipseM)   //!!! NO ";"     
@@ -76,6 +85,10 @@ public:
 	{
 		//!!7 //KIND=1;
 	}
+
+	EllipseM(const EllipseM &); // copy constuctor
+	const EllipseM &operator=(const EllipseM &); // assign function
+
 	void Draw(CDC *dc)
 	{
 		dc->Ellipse(x1, y1, x2, y2);

@@ -8,8 +8,10 @@
 #pragma once
 #endif // _MSC_VER > 1000
 
-#include <vector>
+#include <vector>         // vector lib
+#include <list> 
 #include "Figure.h"
+
 using namespace std;
 // CPaintDlg dialog
 class CPaintDlg : public CDialogEx
@@ -22,7 +24,10 @@ class CPaintDlg : public CDialogEx
 	Figure *f;
 	//!!6 b
 	//vector <Figure *> figs;
-	CTypedPtrArray< CObArray, Figure*> figs;
+	//CTypedPtrArray< CObArray, Figure*> figs;
+	list <Figure*> figs;
+	//stack <Figure*> figsRecycleBin;
+	list <Figure*> figsRecycleBin;
 	//!!6 e
 
 	bool isPressed;
@@ -61,6 +66,10 @@ public:
 	afx_msg void OnBnClickedRadio2();
 	afx_msg void OnBnClickedRadio3();
 	afx_msg void OnFileExitalt();
+	afx_msg void OnBnClickedMfcbuttonRedo();
+	afx_msg void OnBnClickedMfcbutton1();
+	afx_msg void OnBnClickedMfcbutton2();
+	afx_msg void OnBnClickedMfcbuttonUndo();
 };
 
 #endif

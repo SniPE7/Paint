@@ -71,6 +71,8 @@ BEGIN_MESSAGE_MAP(CPaintDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_RADIO2, &CPaintDlg::OnBnClickedRadio2)
 	ON_BN_CLICKED(IDC_RADIO3, &CPaintDlg::OnBnClickedRadio3)
 	ON_COMMAND(ID_FILE_EXITALT, &CPaintDlg::OnFileExitalt)
+	ON_BN_CLICKED(IDC_MFCBUTTON_UNDO, &CPaintDlg::OnBnClickedMfcbuttonUndo)
+	ON_BN_CLICKED(IDC_MFCBUTTON_REDO, &CPaintDlg::OnBnClickedMfcbuttonRedo)
 END_MESSAGE_MAP()
 
 
@@ -149,8 +151,10 @@ void CPaintDlg::OnPaint()
 	dc.SelectObject(oldFont);
 	//!!2
 	//1st
-	for (int i = 0; i<figs.GetSize(); i++)
-		figs[i]->Draw(&dc);
+	for (list <Figure*>::const_iterator it = figs.begin(); it != figs.end(); it++)
+		(*it)->Draw(&dc);
+	//for (int i = 0; i<figs.GetSize(); i++)
+	//	figs[i]->Draw(&dc);
 	//if creation
 	if (isPressed)
 	{
@@ -215,11 +219,11 @@ void CPaintDlg::OnLButtonUp(UINT nFlags, CPoint point)
 		{
 		case RECTANGLE:
 			//!!6 instead of .push_back
-			figs.Add(new RectangleM(startP.x, startP.y, endP.x, endP.y));
+			figs.push_back(new RectangleM(startP.x, startP.y, endP.x, endP.y));
 			break;
 		case ELLIPSE:
 			//!!6
-			figs.Add(new EllipseM(startP.x, startP.y, endP.x, endP.y));
+			figs.push_back(new EllipseM(startP.x, startP.y, endP.x, endP.y));
 			break;
 		}
 		Invalidate();
@@ -245,7 +249,7 @@ void CPaintDlg::OnMouseMove(UINT nFlags, CPoint point)
 		CPen *oldPen;
 		oldPen = dc.SelectObject(&myPen1);
 		dc.SetROP2(R2_NOTXORPEN);
-		endP = point;
+
 		switch (futureFigKIND)
 		{
 		case RECTANGLE:
@@ -254,12 +258,12 @@ void CPaintDlg::OnMouseMove(UINT nFlags, CPoint point)
 			dc.Rectangle(startP.x, startP.y, endP.x, endP.y);
 			break;
 		case ELLIPSE:
-			//dc.Rectangle(startP.x, startP.y, endP.x, endP.y);
 			dc.Ellipse(startP.x, startP.y, endP.x, endP.y);
 			endP = point;
 			dc.Ellipse(startP.x, startP.y, endP.x, endP.y);
 			break;
 		}
+
 		dc.SelectObject(oldPen);
 		dc.SetROP2(R2_COPYPEN);
 
@@ -292,3 +296,68 @@ void CPaintDlg::OnFileExitalt()
 {
 	// TODO: Add your command handler code here
 }
+/*
+case ACTIONID:     // Undo 
+	if (paint.empty())
+	{
+		MessageBox(hwnd, TEXT("List is empty"), szAppName, MB_ICONINFORMATION);
+	}
+	else
+	{
+		sp = new Figure;       // we creare new figure to insert all the data there 
+		sp = paint.back();		// get the latest item 
+		paint.pop_back();		// remove the last item from main list
+		stack.push_back(sp);    // insert onto list we all stack //
+		InvalidateRect(hwnd, &rect, 1);
+	}
+	break;
+
+case ACTIONID + 1:     // Redo 
+	if (stack.empty())
+		MessageBox(hwnd, TEXT("Stack is empty"), szAppName, MB_ICONINFORMATION);
+	else
+	{
+		sp = new Figure;
+		sp = stack.back();
+		stack.pop_back();
+		paint.push_back(sp);
+		InvalidateRect(hwnd, &rect, 1);
+	}
+	break;
+	*/
+
+
+	
+
+
+void CPaintDlg::OnBnClickedMfcbuttonUndo()
+{
+	// TODO: Add your control notification handler code here
+	if (figs.empty())
+	{
+		AfxMessageBox(_T("Error: There are no objects to UNDO!"));
+	}
+	else
+	{
+		Figure *temp = new Figure;       
+		temp = figs.back();		// getting the latest Figure from list
+		figs.pop_back();		// remove the last Figure from list
+		figsRecycleBin.push_back(temp);    // insert Figure into the stack
+		Invalidate();
+	}
+}
+
+void CPaintDlg::OnBnClickedMfcbuttonRedo()
+{
+	if (figsRecycleBin.empty())
+		AfxMessageBox(_T("Error: There are no objects to REDO!"));
+	else
+	{
+		Figure *temp1 = new Figure;
+		temp1 = figsRecycleBin.back();
+		figsRecycleBin.pop_back();
+		figs.push_back(temp1);
+		Invalidate();
+	}
+}
+
