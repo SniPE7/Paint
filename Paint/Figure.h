@@ -53,6 +53,7 @@ public:
 	virtual ~Figure(void);
 
 };
+
 class RectangleM :public Figure{
 	//!!5 b
 	//DECLARE_SERIAL(RectangleM)   //!!! NO ";"     
@@ -92,5 +93,26 @@ public:
 	void Draw(CDC *dc)
 	{
 		dc->Ellipse(x1, y1, x2, y2);
+	}
+};
+
+class LineM :public Figure{
+	//!!5 b
+	//DECLARE_SERIAL(LineM)   //!!! NO ";"     
+	//!!5 e
+public:
+	LineM();  //!!5 must
+	LineM(int xx1, int yy1, int xx2, int yy2)
+		:Figure(xx1, yy1, xx2, yy2)
+	{
+		//!!7 //KIND=1;
+	}
+
+	LineM(const LineM &); // copy constuctor
+	const LineM &operator=(const LineM &); // assign function
+
+	void Draw(CDC *dc)
+	{
+		dc->LineTo(x1, y2);
 	}
 };

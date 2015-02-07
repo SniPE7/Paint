@@ -58,6 +58,9 @@ CPaintDlg::CPaintDlg(CWnd* pParent /*=NULL*/)
 void CPaintDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
+	DDX_Control(pDX, IDC_MFCCOLORBUTTON1, ChoosedColor);
+	DDX_Text(pDX, IDC_MFCCOLORBUTTON1, m_ChoosedColor);
+	
 }
 
 BEGIN_MESSAGE_MAP(CPaintDlg, CDialogEx)
@@ -73,6 +76,8 @@ BEGIN_MESSAGE_MAP(CPaintDlg, CDialogEx)
 	ON_COMMAND(ID_FILE_EXITALT, &CPaintDlg::OnFileExitalt)
 	ON_BN_CLICKED(IDC_MFCBUTTON_UNDO, &CPaintDlg::OnBnClickedMfcbuttonUndo)
 	ON_BN_CLICKED(IDC_MFCBUTTON_REDO, &CPaintDlg::OnBnClickedMfcbuttonRedo)
+	ON_BN_CLICKED(IDC_MFCCOLORBUTTON1, &CPaintDlg::OnBnClickedMfccolorbutton1)
+	
 END_MESSAGE_MAP()
 
 
@@ -225,6 +230,11 @@ void CPaintDlg::OnLButtonUp(UINT nFlags, CPoint point)
 			//!!6
 			figs.push_back(new EllipseM(startP.x, startP.y, endP.x, endP.y));
 			break;
+		case LINE:
+			//!!6
+			figs.push_back(new LineM(startP.x, startP.y, endP.x, endP.y));
+			break;
+
 		}
 		Invalidate();
 
@@ -242,10 +252,10 @@ void CPaintDlg::OnMouseMove(UINT nFlags, CPoint point)
 		CClientDC dc(this);
 
 		CBrush myBrush, *oldBrush;
-		myBrush.CreateSolidBrush(RGB(277, 277, 277));
+		myBrush.CreateSolidBrush(RGB(77, 166, 58)); //Figures color
 		oldBrush = dc.SelectObject(&myBrush);
 
-		CPen myPen1(PS_SOLID, 3, RGB(0, 0, 0));
+		CPen myPen1(PS_SOLID, 1, RGB(0, 0, 0)); //Frame size and color
 		CPen *oldPen;
 		oldPen = dc.SelectObject(&myPen1);
 		dc.SetROP2(R2_NOTXORPEN);
@@ -262,6 +272,7 @@ void CPaintDlg::OnMouseMove(UINT nFlags, CPoint point)
 			endP = point;
 			dc.Ellipse(startP.x, startP.y, endP.x, endP.y);
 			break;
+
 		}
 
 		dc.SelectObject(oldPen);
@@ -289,7 +300,7 @@ void CPaintDlg::OnBnClickedRadio2()
 void CPaintDlg::OnBnClickedRadio3()
 {
 	// TODO: Add your control notification handler code here
-	futureFigKIND = SEGMENT;
+	futureFigKIND = LINE;
 }
 
 void CPaintDlg::OnFileExitalt()
@@ -359,5 +370,12 @@ void CPaintDlg::OnBnClickedMfcbuttonRedo()
 		figs.push_back(temp1);
 		Invalidate();
 	}
+}
+
+
+
+void CPaintDlg::OnBnClickedMfccolorbutton1()
+{
+	
 }
 

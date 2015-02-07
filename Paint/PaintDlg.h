@@ -11,13 +11,14 @@
 #include <vector>         // vector lib
 #include <list> 
 #include "Figure.h"
+#include "afxcolorbutton.h"
 
 using namespace std;
 // CPaintDlg dialog
 class CPaintDlg : public CDialogEx
 {
 	//!!2
-	enum FIGURES{ RECTANGLE, ELLIPSE, SEGMENT };
+	enum FIGURES{ RECTANGLE, ELLIPSE, LINE };
 	FIGURES futureFigKIND;
 
 	// added s
@@ -50,6 +51,8 @@ public:
 protected:
 	HICON m_hIcon;
 	CMenu m_menu;
+	CMFCColorButton ChoosedColor;
+	COLORREF m_ChoosedColor;
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
@@ -70,6 +73,7 @@ public:
 	afx_msg void OnBnClickedMfcbutton1();
 	afx_msg void OnBnClickedMfcbutton2();
 	afx_msg void OnBnClickedMfcbuttonUndo();
+	afx_msg void OnBnClickedMfccolorbutton1();
 };
 
 #endif

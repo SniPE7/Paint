@@ -48,3 +48,12 @@ const EllipseM&EllipseM::operator=(const EllipseM &e)
 		EllipseM(e);
 	return *this;
 }
+
+LineM::LineM(){}
+LineM::LineM(const LineM &l) : Figure(l.x1, l.y1, l.x2, l.y2){}
+const LineM&LineM::operator=(const LineM &l)
+{
+	if (&l != this)
+		LineM(l);
+	return *this;
+}
