@@ -51,6 +51,7 @@ END_MESSAGE_MAP()
 
 CPaintDlg::CPaintDlg(CWnd* pParent /*=NULL*/)
 	: CDialogEx(CPaintDlg::IDD, pParent)
+	, m_MouseMoveString(_T(""))
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 }
@@ -60,7 +61,8 @@ void CPaintDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_MFCCOLORBUTTON1, ChoosedColor);
 	DDX_Text(pDX, IDC_MFCCOLORBUTTON1, m_ChoosedColor);
-	
+
+	DDX_Text(pDX, IDC_AXIS, m_MouseMoveString);
 }
 
 BEGIN_MESSAGE_MAP(CPaintDlg, CDialogEx)
@@ -282,6 +284,11 @@ void CPaintDlg::OnMouseMove(UINT nFlags, CPoint point)
 		dc.SelectObject(oldBrush);
 
 	}
+
+	m_MouseMoveString.Format(_T("x: %d, y: %d"), point.x, point.y);
+	UpdateData(FALSE);
+
+	
 	CDialog::OnMouseMove(nFlags, point);
 }
 
@@ -376,6 +383,17 @@ void CPaintDlg::OnBnClickedMfcbuttonRedo()
 
 void CPaintDlg::OnBnClickedMfccolorbutton1()
 {
-	
+	CMFCColorDialog dlgColors;
+
+    if( dlgColors.DoModal() == IDOK )
+	SetBackgroundColor(dlgColors.GetColor());
+
+	CMFCColorDialog dlg;
+	if (dlg.DoModal() == IDOK)
+	{
+		COLORREF m_ChoosedColor = dlg.GetColor();
+		TRACE(_T("RGB value of the selected color - red = %u, ") _T("green = %u, blue = %u\n"), GetRValue(m_ChoosedColor), GetGValue(m_ChoosedColor), GetBValue(m_ChoosedColor));
+		UpdateData(TRUE);
+	}
 }
 

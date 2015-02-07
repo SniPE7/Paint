@@ -52,7 +52,7 @@ protected:
 	HICON m_hIcon;
 	CMenu m_menu;
 	CMFCColorButton ChoosedColor;
-	COLORREF m_ChoosedColor;
+	
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
@@ -74,6 +74,8 @@ public:
 	afx_msg void OnBnClickedMfcbutton2();
 	afx_msg void OnBnClickedMfcbuttonUndo();
 	afx_msg void OnBnClickedMfccolorbutton1();
+	CString m_MouseMoveString;
+	COLORREF m_ChoosedColor;
 };
 
 #endif
