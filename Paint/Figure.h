@@ -21,6 +21,7 @@ public:
 			ar << x2;
 			ar << y1;
 			ar << y2;
+			ar << fs;
 			//!!7 //ar << KIND;
 		}
 		else // Loading, not storing
@@ -29,21 +30,23 @@ public:
 			ar >> x2;
 			ar >> y1;
 			ar >> y2;
+			ar >> fs;
 			//!!7 //ar >> KIND;
 		}
 	}
 	//!!5 e
 protected:
 public:
-	int x1, y1, x2, y2;//!!7 //,KIND;
+	int x1, y1, x2, y2, fs;//!!7 //,KIND;
 	//int color;
 	Figure();
-	Figure(int xx1, int yy1, int xx2, int yy2)
+	Figure(int xx1, int yy1, int xx2, int yy2, int frameSize)
 	{
 		x1 = xx1;
 		x2 = xx2;
 		y1 = yy1;
 		y2 = yy2;
+		fs = frameSize;
 	}
 	//!!5 for Serialization
 	// NOT PURE !!!  
@@ -61,8 +64,8 @@ class RectangleM :public Figure{
 	//!!5 e
 public:
 	RectangleM(); //!!5 must 
-	RectangleM(int xx1, int yy1, int xx2, int yy2)
-		:Figure(xx1, yy1, xx2, yy2)
+	RectangleM(int xx1, int yy1, int xx2, int yy2, int fs)
+		:Figure(xx1, yy1, xx2, yy2, fs)
 	{
 		//!!7 //KIND=0;
 	}
@@ -87,8 +90,8 @@ class EllipseM :public Figure{
 	//!!5 e
 public:
 	EllipseM();  //!!5 must
-	EllipseM(int xx1, int yy1, int xx2, int yy2)
-		:Figure(xx1, yy1, xx2, yy2)
+	EllipseM(int xx1, int yy1, int xx2, int yy2, int fs)
+		:Figure(xx1, yy1, xx2, yy2, fs)
 	{
 		//!!7 //KIND=1;
 	}
@@ -113,8 +116,8 @@ class LineM :public Figure{
 	//!!5 e
 public:
 	LineM();  //!!5 must
-	LineM(int xx1, int yy1, int xx2, int yy2)
-		:Figure(xx1, yy1, xx2, yy2)
+	LineM(int xx1, int yy1, int xx2, int yy2, int fs)
+		:Figure(xx1, yy1, xx2, yy2, fs)
 	{
 		//!!7 //KIND=1;
 	}

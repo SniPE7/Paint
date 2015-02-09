@@ -90,6 +90,9 @@ public:
 	afx_msg void OnBnClickedRadioDrawB6();
 	CMFCButton m_btnUndo;
 	CMFCButton m_btnRedo;
+	CComboBox* pComboBox;
+	afx_msg void OnCbnSelchangeCombo1();
+	int frameSize;
 };
 
 #endif

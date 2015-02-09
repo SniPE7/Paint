@@ -85,6 +85,7 @@ BEGIN_MESSAGE_MAP(CPaintDlg, CDialogEx)
 	//ON_BN_CLICKED(IDC_RADIO6, &CPaintDlg::OnBnClickedRadio6)
 	ON_BN_CLICKED(IDC_RADIO_MOVE_B5, &CPaintDlg::OnBnClickedRadioMoveB5)
 	ON_BN_CLICKED(IDC_RADIO_DRAW_B6, &CPaintDlg::OnBnClickedRadioDrawB6)
+	ON_CBN_SELCHANGE(IDC_COMBO1, &CPaintDlg::OnCbnSelchangeCombo1)
 END_MESSAGE_MAP()
 
 
@@ -98,6 +99,21 @@ BOOL CPaintDlg::OnInitDialog()
 	m_btnUndo.SetBitmap(LoadBitmap(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDB_UNDO)));
 	m_btnRedo.SetBitmap(LoadBitmap(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDB_REDO)));
 
+	pComboBox = (CComboBox*)GetDlgItem(IDC_COMBO1);
+
+	
+	pComboBox->AddString(_T("Border 1"));
+	pComboBox->AddString(_T("Border 2"));
+	pComboBox->AddString(_T("Border 3"));
+	pComboBox->AddString(_T("Border 4"));
+	pComboBox->AddString(_T("Border 5"));
+	pComboBox->AddString(_T("Border 6"));
+	pComboBox->AddString(_T("Border 7"));
+	pComboBox->AddString(_T("Border 8"));
+	pComboBox->AddString(_T("Border 9"));
+	
+
+	
 	// IDM_ABOUTBOX must be in the system command range.
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
 	ASSERT(IDM_ABOUTBOX < 0xF000);
@@ -255,16 +271,13 @@ void CPaintDlg::OnLButtonUp(UINT nFlags, CPoint point)
 			switch (futureFigKIND)
 			{
 			case RECTANGLE:
-				//!!6 instead of .push_back
-				figs.push_back(new RectangleM(startP.x, startP.y, endP.x, endP.y));
+				figs.push_back(new RectangleM(startP.x, startP.y, endP.x, endP.y, frameSize));
 				break;
 			case ELLIPSE:
-				//!!6
-				figs.push_back(new EllipseM(startP.x, startP.y, endP.x, endP.y));
+				figs.push_back(new EllipseM(startP.x, startP.y, endP.x, endP.y, frameSize));
 				break;
 			case LINE:
-				//!!6
-				figs.push_back(new LineM(startP.x, startP.y, endP.x, endP.y));
+				figs.push_back(new LineM(startP.x, startP.y, endP.x, endP.y, frameSize));
 				break;
 			}
 			Invalidate();
@@ -315,7 +328,7 @@ void CPaintDlg::OnMouseMove(UINT nFlags, CPoint point)
 			myBrush.CreateSolidBrush(RGB(77, 166, 58)); //Figures color
 			oldBrush = dc.SelectObject(&myBrush);
 
-			CPen myPen1(PS_SOLID, 1, RGB(0, 0, 0)); //Frame size and color
+			CPen myPen1(PS_SOLID, frameSize, RGB(0, 0, 0)); //Frame size and color
 			CPen *oldPen;
 			oldPen = dc.SelectObject(&myPen1);
 			dc.SetROP2(R2_NOTXORPEN);
@@ -331,6 +344,11 @@ void CPaintDlg::OnMouseMove(UINT nFlags, CPoint point)
 				dc.Ellipse(startP.x, startP.y, endP.x, endP.y);
 				endP = point;
 				dc.Ellipse(startP.x, startP.y, endP.x, endP.y);
+				break;
+			case LINE:
+				dc.LineTo(startP.x, endP.x);
+				endP = point;
+				dc.LineTo(startP.x, endP.x);
 				break;
 			}
 
@@ -470,3 +488,7 @@ void CPaintDlg::OnBnClickedRadioDrawB6()
 }
 
 
+void CPaintDlg::OnCbnSelchangeCombo1()
+{
+	frameSize = pComboBox->GetCurSel();
+}
