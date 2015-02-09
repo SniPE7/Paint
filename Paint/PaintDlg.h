@@ -12,6 +12,7 @@
 #include <list> 
 #include "Figure.h"
 #include "afxcolorbutton.h"
+#include "afxbutton.h"
 
 using namespace std;
 // CPaintDlg dialog
@@ -59,6 +60,9 @@ protected:
 	CMFCColorButton ChoosedColor;
 	HCURSOR m_Cursor;
 
+	CBitmap m_Undo;
+	CBitmap m_Redo;
+
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
@@ -84,6 +88,8 @@ public:
 	afx_msg void OnBnClickedRadio6();
 	afx_msg void OnBnClickedRadioMoveB5();
 	afx_msg void OnBnClickedRadioDrawB6();
+	CMFCButton m_btnUndo;
+	CMFCButton m_btnRedo;
 };
 
 #endif

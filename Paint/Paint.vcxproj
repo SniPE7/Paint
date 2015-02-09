@@ -121,6 +121,8 @@
     <ResourceCompile Include="Paint.rc" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\Pictures\redo.png" />
+    <Image Include="..\..\..\..\Pictures\undo.png" />
     <Image Include="res\bitmap1.bmp" />
     <Image Include="res\Paint.ico" />
   </ItemGroup>

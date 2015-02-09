@@ -63,6 +63,8 @@ void CPaintDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_MFCCOLORBUTTON1, m_ChoosedColor);
 
 	DDX_Text(pDX, IDC_AXIS, m_MouseMoveString);
+	DDX_Control(pDX, IDC_MFCBUTTON_UNDO, m_btnUndo);
+	DDX_Control(pDX, IDC_MFCBUTTON_REDO, m_btnRedo);
 }
 
 BEGIN_MESSAGE_MAP(CPaintDlg, CDialogEx)
@@ -93,6 +95,8 @@ BOOL CPaintDlg::OnInitDialog()
 	CDialogEx::OnInitDialog();
 
 	// Add "About..." menu item to system menu.
+	m_btnUndo.SetBitmap(LoadBitmap(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDB_UNDO)));
+	m_btnRedo.SetBitmap(LoadBitmap(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDB_REDO)));
 
 	// IDM_ABOUTBOX must be in the system command range.
 	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
