@@ -21,6 +21,9 @@ class CPaintDlg : public CDialogEx
 	enum FIGURES{ RECTANGLE, ELLIPSE, LINE };
 	FIGURES futureFigKIND;
 
+	enum ACTION_TYPE{ DRAW, MOVE };
+	ACTION_TYPE actionKind;
+
 	// added s
 	Figure *f;
 	//!!6 b
@@ -34,6 +37,8 @@ class CPaintDlg : public CDialogEx
 	bool isPressed;
 	CPoint startP;
 	CPoint endP;
+	CPoint onPoint;
+	int indexToMove;
 	// added e
 	// Construction
 // Construction
@@ -52,7 +57,7 @@ protected:
 	HICON m_hIcon;
 	CMenu m_menu;
 	CMFCColorButton ChoosedColor;
-	
+	HCURSOR m_Cursor;
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();
@@ -76,6 +81,9 @@ public:
 	afx_msg void OnBnClickedMfccolorbutton1();
 	CString m_MouseMoveString;
 	COLORREF m_ChoosedColor;
+	afx_msg void OnBnClickedRadio6();
+	afx_msg void OnBnClickedRadioMoveB5();
+	afx_msg void OnBnClickedRadioDrawB6();
 };
 
 #endif

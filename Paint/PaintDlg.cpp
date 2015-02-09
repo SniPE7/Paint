@@ -80,6 +80,9 @@ BEGIN_MESSAGE_MAP(CPaintDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_MFCBUTTON_REDO, &CPaintDlg::OnBnClickedMfcbuttonRedo)
 	ON_BN_CLICKED(IDC_MFCCOLORBUTTON1, &CPaintDlg::OnBnClickedMfccolorbutton1)
 	
+	//ON_BN_CLICKED(IDC_RADIO6, &CPaintDlg::OnBnClickedRadio6)
+	ON_BN_CLICKED(IDC_RADIO_MOVE_B5, &CPaintDlg::OnBnClickedRadioMoveB5)
+	ON_BN_CLICKED(IDC_RADIO_DRAW_B6, &CPaintDlg::OnBnClickedRadioDrawB6)
 END_MESSAGE_MAP()
 
 
@@ -207,9 +210,30 @@ void CPaintDlg::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	// TODO: Add your message handler code here and/or call default
 	//!!4: added endP= 
-	endP = startP = point;
 	isPressed = true;
-
+	indexToMove = -1;
+	int counter, flag_found;
+	counter = flag_found = 0;
+	
+	switch (actionKind)
+	{
+	case DRAW:
+		endP = startP = point;
+		break;
+	case MOVE:
+		for (list <Figure*>::const_reverse_iterator it = figs.rbegin(); it != figs.rend() && !(flag_found); ++it)
+		{
+			if (point.x >= (*it)->x1 && point.x <= (*it)->x2 && point.y >= (*it)->y1 && point.y <= (*it)->y2)     //If click on rectangle area
+			{
+				flag_found = 1;
+				onPoint = point;
+				indexToMove = counter;
+			}
+			counter++;
+		}
+		SetCapture();
+		break;
+	}
 	CDialog::OnLButtonDown(nFlags, point);
 
 }
@@ -217,74 +241,104 @@ void CPaintDlg::OnLButtonDown(UINT nFlags, CPoint point)
 void CPaintDlg::OnLButtonUp(UINT nFlags, CPoint point)
 {
 	// TODO: Add your message handler code here and/or call default
-	if (isPressed)
+	switch (actionKind)
 	{
-
-		endP = point;
-		isPressed = false;
-		switch (futureFigKIND)
+	case DRAW:
+		if (isPressed)
 		{
-		case RECTANGLE:
-			//!!6 instead of .push_back
-			figs.push_back(new RectangleM(startP.x, startP.y, endP.x, endP.y));
-			break;
-		case ELLIPSE:
-			//!!6
-			figs.push_back(new EllipseM(startP.x, startP.y, endP.x, endP.y));
-			break;
-		case LINE:
-			//!!6
-			figs.push_back(new LineM(startP.x, startP.y, endP.x, endP.y));
-			break;
-
+			endP = point;
+			isPressed = false;
+			switch (futureFigKIND)
+			{
+			case RECTANGLE:
+				//!!6 instead of .push_back
+				figs.push_back(new RectangleM(startP.x, startP.y, endP.x, endP.y));
+				break;
+			case ELLIPSE:
+				//!!6
+				figs.push_back(new EllipseM(startP.x, startP.y, endP.x, endP.y));
+				break;
+			case LINE:
+				//!!6
+				figs.push_back(new LineM(startP.x, startP.y, endP.x, endP.y));
+				break;
+			}
+			Invalidate();
 		}
+		break;
+
+	case MOVE:
+		isPressed = false;
+		list <Figure*>::const_reverse_iterator it = figs.rbegin();
+		advance(it, indexToMove);
+		(*it)->x1 += (point.x - onPoint.x);             //Increase left-top and right-bot Points
+		(*it)->x2 += (point.x - onPoint.x);
+		(*it)->y1 += (point.y - onPoint.y);
+		(*it)->y2 += (point.y - onPoint.y);
+		onPoint = point;
 		Invalidate();
-
+		ReleaseCapture();
+		break;
 	}
-
 	CDialog::OnLButtonUp(nFlags, point);
 }
 void CPaintDlg::OnMouseMove(UINT nFlags, CPoint point)
 {
 	// TODO: Add your message handler code here and/or call default
-	if (isPressed)
+	switch (actionKind)
 	{
+	case MOVE:
+		//AfxMessageBox(_T("AAAAAAAAAAAAAAAAA"));
 
-
-		CClientDC dc(this);
-
-		CBrush myBrush, *oldBrush;
-		myBrush.CreateSolidBrush(RGB(77, 166, 58)); //Figures color
-		oldBrush = dc.SelectObject(&myBrush);
-
-		CPen myPen1(PS_SOLID, 1, RGB(0, 0, 0)); //Frame size and color
-		CPen *oldPen;
-		oldPen = dc.SelectObject(&myPen1);
-		dc.SetROP2(R2_NOTXORPEN);
-
-		switch (futureFigKIND)
+		if(isPressed == true && indexToMove!= -1)
 		{
-		case RECTANGLE:
-			dc.Rectangle(startP.x, startP.y, endP.x, endP.y);
-			endP = point;
-			dc.Rectangle(startP.x, startP.y, endP.x, endP.y);
-			break;
-		case ELLIPSE:
-			dc.Ellipse(startP.x, startP.y, endP.x, endP.y);
-			endP = point;
-			dc.Ellipse(startP.x, startP.y, endP.x, endP.y);
-			break;
+			list <Figure*>::const_reverse_iterator it = figs.rbegin();
+			advance(it,indexToMove);
+			(*it)->x1 += (point.x - onPoint.x);             //Increase left-top and right-bot Points
+			(*it)->x2 += (point.x - onPoint.x);
+			(*it)->y1 += (point.y - onPoint.y);
+			(*it)->y2 += (point.y - onPoint.y);
+			onPoint = point;
+			Invalidate();   //Invalidate the screeen 
+		}
+		break;
+	case DRAW:
+		if (isPressed)
+		{
+			CClientDC dc(this);
+
+			CBrush myBrush, *oldBrush;
+			myBrush.CreateSolidBrush(RGB(77, 166, 58)); //Figures color
+			oldBrush = dc.SelectObject(&myBrush);
+
+			CPen myPen1(PS_SOLID, 1, RGB(0, 0, 0)); //Frame size and color
+			CPen *oldPen;
+			oldPen = dc.SelectObject(&myPen1);
+			dc.SetROP2(R2_NOTXORPEN);
+
+			switch (futureFigKIND)
+			{
+			case RECTANGLE:
+				dc.Rectangle(startP.x, startP.y, endP.x, endP.y);
+				endP = point;
+				dc.Rectangle(startP.x, startP.y, endP.x, endP.y);
+				break;
+			case ELLIPSE:
+				dc.Ellipse(startP.x, startP.y, endP.x, endP.y);
+				endP = point;
+				dc.Ellipse(startP.x, startP.y, endP.x, endP.y);
+				break;
+			}
+
+			dc.SelectObject(oldPen);
+			dc.SetROP2(R2_COPYPEN);
+
+
+			dc.SelectObject(oldBrush);
 
 		}
-
-		dc.SelectObject(oldPen);
-		dc.SetROP2(R2_COPYPEN);
-
-
-		dc.SelectObject(oldBrush);
-
+		break;
 	}
-
 	m_MouseMoveString.Format(_T("x: %d, y: %d"), point.x, point.y);
 	UpdateData(FALSE);
 
@@ -396,4 +450,19 @@ void CPaintDlg::OnBnClickedMfccolorbutton1()
 		UpdateData(TRUE);
 	}
 }
+
+
+void CPaintDlg::OnBnClickedRadioMoveB5()
+{
+	// TODO: Add your control notification handler code here
+	actionKind = MOVE;
+}
+
+
+void CPaintDlg::OnBnClickedRadioDrawB6()
+{
+	// TODO: Add your control notification handler code here
+	actionKind = DRAW;
+}
+
 
