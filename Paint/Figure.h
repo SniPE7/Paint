@@ -116,8 +116,7 @@ class LineM :public Figure{
 	//!!5 e
 public:
 	LineM();  //!!5 must
-	LineM(int xx1, int yy1, int xx2, int yy2, int fs)
-		:Figure(xx1, yy1, xx2, yy2, fs)
+	LineM(int xx2, int yy2, int fs) :Figure(xx2, yy2, xx2, yy2, fs)
 	{
 		//!!7 //KIND=1;
 	}
