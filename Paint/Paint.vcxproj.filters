@@ -63,10 +63,10 @@
     <Image Include="res\bitmap1.bmp">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\..\..\..\Pictures\undo.png">
+    <Image Include="res\undo.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="..\..\..\..\Pictures\redo.png">
+    <Image Include="res\redo.png">
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
