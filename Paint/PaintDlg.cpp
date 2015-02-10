@@ -179,6 +179,14 @@ void CPaintDlg::OnPaint()
 	dc.SetBkMode(TRANSPARENT);
 
 	dc.SelectObject(oldFont);
+	CBrush myBrush, *oldBrush;
+			myBrush.CreateSolidBrush(RGB(77, 166, 58)); //Figures color
+			oldBrush = dc.SelectObject(&myBrush);
+
+			CPen myPen1(PS_SOLID, frameSize, RGB(0, 0, 0)); //Frame size and color
+			CPen *oldPen;
+			oldPen = dc.SelectObject(&myPen1);
+			dc.SetROP2(R2_NOTXORPEN);
 	//!!2
 	//1st
 	for (list <Figure*>::const_iterator it = figs.begin(); it != figs.end(); it++)
@@ -286,14 +294,14 @@ void CPaintDlg::OnLButtonUp(UINT nFlags, CPoint point)
 
 	case MOVE:
 		isPressed = false;
-		list <Figure*>::const_reverse_iterator it = figs.rbegin();
-		advance(it, indexToMove);
-		(*it)->x1 += (point.x - onPoint.x);             //Increase left-top and right-bot Points
-		(*it)->x2 += (point.x - onPoint.x);
-		(*it)->y1 += (point.y - onPoint.y);
-		(*it)->y2 += (point.y - onPoint.y);
-		onPoint = point;
-		Invalidate();
+	//	list <Figure*>::const_reverse_iterator it = figs.rbegin();
+	//	advance(it, indexToMove);
+	//	(*it)->x1 += (point.x - onPoint.x);             //Increase left-top and right-bot Points
+	//	(*it)->x2 += (point.x - onPoint.x);
+	//	(*it)->y1 += (point.y - onPoint.y);
+	//	(*it)->y2 += (point.y - onPoint.y);
+	//	onPoint = point;
+		//Invalidate();
 		ReleaseCapture();
 		break;
 	}
@@ -305,17 +313,16 @@ void CPaintDlg::OnMouseMove(UINT nFlags, CPoint point)
 	switch (actionKind)
 	{
 	case MOVE:
-		//AfxMessageBox(_T("AAAAAAAAAAAAAAAAA"));
-
 		if(isPressed == true && indexToMove!= -1)
 		{
 			list <Figure*>::const_reverse_iterator it = figs.rbegin();
 			advance(it,indexToMove);
-			(*it)->x1 += (point.x - onPoint.x);             //Increase left-top and right-bot Points
-			(*it)->x2 += (point.x - onPoint.x);
-			(*it)->y1 += (point.y - onPoint.y);
-			(*it)->y2 += (point.y - onPoint.y);
-			onPoint = point;
+				(*it)->x1 += (point.x - onPoint.x);             //Increase left-top and right-bot Points
+				(*it)->x2 += (point.x - onPoint.x);
+				(*it)->y1 += (point.y - onPoint.y);
+				(*it)->y2 += (point.y - onPoint.y);
+				onPoint = point;
+			
 			Invalidate();   //Invalidate the screeen 
 		}
 		break;

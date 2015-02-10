@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Figure.h"
+
 //!!5 b
 IMPLEMENT_SERIAL(Figure, CObject, 1)
 //IMPLEMENT_SERIAL(RectangleM, CObject, 1)
@@ -40,6 +41,8 @@ const RectangleM&RectangleM::operator=(const RectangleM &r)
 		RectangleM(r);
 	return *this;
 }
+
+
 //!!5
 EllipseM::EllipseM(){}
 EllipseM::EllipseM(const EllipseM &e) : Figure(e.x1, e.y1, e.x2, e.y2, e.fs){}

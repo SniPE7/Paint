@@ -4,7 +4,8 @@
 // #endif
 // use:
 #pragma once   
-#include <string.h>
+#include <string>
+using std::string;
 
 //!!5 for Serialization
 class Figure : public CObject
@@ -55,7 +56,7 @@ public:
 
 	virtual void Draw(CDC *dc){}
 	virtual ~Figure(void);
-	//virtual string getFigureName();
+	
 };
 
 class RectangleM :public Figure{
@@ -77,11 +78,7 @@ public:
 	{
 		dc->Rectangle(x1, y1, x2, y2);
 	}
-	/*
-	string getFigureName()
-	{
-		return "Rectangle";
-	} */
+
 };
 
 class EllipseM :public Figure{
@@ -103,11 +100,8 @@ public:
 	{
 		dc->Ellipse(x1, y1, x2, y2);
 	}
-	/*
-	string getFigureName()
-	{
-		return "Ellipse";
-	*/
+
+
 };
 
 class LineM :public Figure{
@@ -129,9 +123,4 @@ public:
 	{
 		dc->LineTo(x1, y2);
 	}
-	/*
-	string getFigureName()
-	{
-		return "Line";
-	}*/
 };
