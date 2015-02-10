@@ -86,6 +86,7 @@ BEGIN_MESSAGE_MAP(CPaintDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_RADIO_MOVE_B5, &CPaintDlg::OnBnClickedRadioMoveB5)
 	ON_BN_CLICKED(IDC_RADIO_DRAW_B6, &CPaintDlg::OnBnClickedRadioDrawB6)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CPaintDlg::OnCbnSelchangeCombo1)
+	ON_BN_CLICKED(IDC_MFCCOLORBUTTON2, &CPaintDlg::OnBnClickedMfccolorbutton2)
 END_MESSAGE_MAP()
 
 
@@ -94,6 +95,9 @@ END_MESSAGE_MAP()
 BOOL CPaintDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
+	m_ChoosedColor = RGB(0, 0, 0);
+	m_ChoosedColorB = RGB(0, 0, 0);
+
 
 	// Add "About..." menu item to system menu.
 	m_btnUndo.SetBitmap(LoadBitmap(AfxGetInstanceHandle(), MAKEINTRESOURCE(IDB_UNDO)));
@@ -179,14 +183,21 @@ void CPaintDlg::OnPaint()
 	dc.SetBkMode(TRANSPARENT);
 
 	dc.SelectObject(oldFont);
-	CBrush myBrush, *oldBrush;
-			myBrush.CreateSolidBrush(RGB(77, 166, 58)); //Figures color
-			oldBrush = dc.SelectObject(&myBrush);
 
-			CPen myPen1(PS_SOLID, frameSize, RGB(0, 0, 0)); //Frame size and color
-			CPen *oldPen;
-			oldPen = dc.SelectObject(&myPen1);
-			dc.SetROP2(R2_NOTXORPEN);
+	CBrush myBrush, *oldBrush;
+	myBrush.CreateSolidBrush(m_ChoosedColor); //Figures color
+	oldBrush = dc.SelectObject(&myBrush);
+
+	CPen myPen1(PS_SOLID, frameSize, m_ChoosedColorB); //Frame size and color
+	CPen *oldPen;
+	oldPen = dc.SelectObject(&myPen1);
+	dc.SetROP2(R2_NOTXORPEN);
+
+	dc.MoveTo(startP);
+	dc.LineTo(endP.x, endP.y);
+	//dc.SelectObject(oldPen);
+	dc.SetROP2(R2_COPYPEN);
+
 	//!!2
 	//1st
 	for (list <Figure*>::const_iterator it = figs.begin(); it != figs.end(); it++)
@@ -285,7 +296,7 @@ void CPaintDlg::OnLButtonUp(UINT nFlags, CPoint point)
 				figs.push_back(new EllipseM(startP.x, startP.y, endP.x, endP.y, frameSize));
 				break;
 			case LINE:
-				figs.push_back(new LineM(startP.x, startP.y, endP.x, endP.y, frameSize));
+				figs.push_back(new LineM(endP.x, endP.y, frameSize));
 				break;
 			}
 			Invalidate();
@@ -294,14 +305,14 @@ void CPaintDlg::OnLButtonUp(UINT nFlags, CPoint point)
 
 	case MOVE:
 		isPressed = false;
-	//	list <Figure*>::const_reverse_iterator it = figs.rbegin();
-	//	advance(it, indexToMove);
-	//	(*it)->x1 += (point.x - onPoint.x);             //Increase left-top and right-bot Points
-	//	(*it)->x2 += (point.x - onPoint.x);
-	//	(*it)->y1 += (point.y - onPoint.y);
-	//	(*it)->y2 += (point.y - onPoint.y);
-	//	onPoint = point;
-		//Invalidate();
+		list <Figure*>::const_reverse_iterator it = figs.rbegin();
+		advance(it, indexToMove);
+		(*it)->x1 += (point.x - onPoint.x);             //Increase left-top and right-bot Points
+		(*it)->x2 += (point.x - onPoint.x);
+		(*it)->y1 += (point.y - onPoint.y);
+		(*it)->y2 += (point.y - onPoint.y);
+		onPoint = point;
+		Invalidate();
 		ReleaseCapture();
 		break;
 	}
@@ -313,16 +324,17 @@ void CPaintDlg::OnMouseMove(UINT nFlags, CPoint point)
 	switch (actionKind)
 	{
 	case MOVE:
+		//AfxMessageBox(_T("AAAAAAAAAAAAAAAAA"));
+
 		if(isPressed == true && indexToMove!= -1)
 		{
 			list <Figure*>::const_reverse_iterator it = figs.rbegin();
 			advance(it,indexToMove);
-				(*it)->x1 += (point.x - onPoint.x);             //Increase left-top and right-bot Points
-				(*it)->x2 += (point.x - onPoint.x);
-				(*it)->y1 += (point.y - onPoint.y);
-				(*it)->y2 += (point.y - onPoint.y);
-				onPoint = point;
-			
+			(*it)->x1 += (point.x - onPoint.x);             //Increase left-top and right-bot Points
+			(*it)->x2 += (point.x - onPoint.x);
+			(*it)->y1 += (point.y - onPoint.y);
+			(*it)->y2 += (point.y - onPoint.y);
+			onPoint = point;
 			Invalidate();   //Invalidate the screeen 
 		}
 		break;
@@ -332,10 +344,10 @@ void CPaintDlg::OnMouseMove(UINT nFlags, CPoint point)
 			CClientDC dc(this);
 
 			CBrush myBrush, *oldBrush;
-			myBrush.CreateSolidBrush(RGB(77, 166, 58)); //Figures color
+			myBrush.CreateSolidBrush(m_ChoosedColor); //Figures color
 			oldBrush = dc.SelectObject(&myBrush);
 
-			CPen myPen1(PS_SOLID, frameSize, RGB(0, 0, 0)); //Frame size and color
+			CPen myPen1(PS_SOLID, frameSize, m_ChoosedColorB); //Frame size and color
 			CPen *oldPen;
 			oldPen = dc.SelectObject(&myPen1);
 			dc.SetROP2(R2_NOTXORPEN);
@@ -353,9 +365,12 @@ void CPaintDlg::OnMouseMove(UINT nFlags, CPoint point)
 				dc.Ellipse(startP.x, startP.y, endP.x, endP.y);
 				break;
 			case LINE:
-				dc.LineTo(startP.x, endP.x);
+				dc.MoveTo(startP);
+				dc.LineTo(endP.x, endP.y);
 				endP = point;
-				dc.LineTo(startP.x, endP.x);
+				dc.MoveTo(startP);
+				dc.LineTo(endP.x, endP.y);
+				dc.SelectObject(oldPen);
 				break;
 			}
 
@@ -468,16 +483,8 @@ void CPaintDlg::OnBnClickedMfccolorbutton1()
 {
 	CMFCColorDialog dlgColors;
 
-    if( dlgColors.DoModal() == IDOK )
-	SetBackgroundColor(dlgColors.GetColor());
-
-	CMFCColorDialog dlg;
-	if (dlg.DoModal() == IDOK)
-	{
-		COLORREF m_ChoosedColor = dlg.GetColor();
-		TRACE(_T("RGB value of the selected color - red = %u, ") _T("green = %u, blue = %u\n"), GetRValue(m_ChoosedColor), GetGValue(m_ChoosedColor), GetBValue(m_ChoosedColor));
-		UpdateData(TRUE);
-	}
+	if (dlgColors.DoModal() == IDOK)
+		m_ChoosedColor = dlgColors.GetColor();
 }
 
 
@@ -498,4 +505,13 @@ void CPaintDlg::OnBnClickedRadioDrawB6()
 void CPaintDlg::OnCbnSelchangeCombo1()
 {
 	frameSize = pComboBox->GetCurSel();
+}
+
+
+void CPaintDlg::OnBnClickedMfccolorbutton2()
+{
+	CMFCColorDialog dlgColors;
+
+	if (dlgColors.DoModal() == IDOK)
+		m_ChoosedColorB = dlgColors.GetColor();
 }

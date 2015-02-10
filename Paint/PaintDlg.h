@@ -59,7 +59,8 @@ protected:
 	CMenu m_menu;
 	CMFCColorButton ChoosedColor;
 	HCURSOR m_Cursor;
-
+	COLORREF m_ChoosedColor;
+	COLORREF m_ChoosedColorB;
 	CBitmap m_Undo;
 	CBitmap m_Redo;
 
@@ -84,7 +85,6 @@ public:
 	afx_msg void OnBnClickedMfcbuttonUndo();
 	afx_msg void OnBnClickedMfccolorbutton1();
 	CString m_MouseMoveString;
-	COLORREF m_ChoosedColor;
 	afx_msg void OnBnClickedRadio6();
 	afx_msg void OnBnClickedRadioMoveB5();
 	afx_msg void OnBnClickedRadioDrawB6();
@@ -93,6 +93,7 @@ public:
 	CComboBox* pComboBox;
 	afx_msg void OnCbnSelchangeCombo1();
 	int frameSize;
+	afx_msg void OnBnClickedMfccolorbutton2();
 };
 
 #endif
