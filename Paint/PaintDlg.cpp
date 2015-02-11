@@ -92,6 +92,13 @@ BEGIN_MESSAGE_MAP(CPaintDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_MFCCOLORBUTTON2, &CPaintDlg::OnBnClickedMfccolorbutton2)
 	ON_BN_CLICKED(IDSAVEAS, &CPaintDlg::OnBnClickedSaveas)
 	ON_BN_CLICKED(IDOPEN, &CPaintDlg::OnBnClickedOpen)
+	ON_COMMAND(ID_FILE_ERASECURRENTFILE, &CPaintDlg::OnFileErasecurrentfile)
+	ON_COMMAND(ID_FILE_OPENFILE, &CPaintDlg::OnFileOpenfile)
+	ON_COMMAND(ID_FILE_SAVEALL, &CPaintDlg::OnFileSaveall)
+	ON_COMMAND(ID_EDIT_UNDOCTRL, &CPaintDlg::OnEditUndoctrl)
+	ON_COMMAND(ID_EDIT_REDOCTRL, &CPaintDlg::OnEditRedoctrl)
+	ON_COMMAND(ID_MOVE, &CPaintDlg::OnMove)
+	ON_COMMAND(ID_DRAW, &CPaintDlg::OnDraw)
 END_MESSAGE_MAP()
 
 
@@ -447,7 +454,7 @@ void CPaintDlg::OnBnClickedRadio3()
 
 void CPaintDlg::OnFileExitalt()
 {
-	// TODO: Add your command handler code here
+	EndDialog(-1);
 }
 /*
 case ACTIONID:     // Undo 
@@ -561,7 +568,7 @@ void CPaintDlg::OnBnClickedSaveas()
 	for (list <Figure*>::const_iterator it = figs.begin(); it != figs.end(); it++)
 		figs_arr.Add(*it);
 
-	char strFilter[] = { "Den & Stat Format (*.ds)|*.ds|" };
+	char strFilter[] = { "Den & Stas Format (*.ds)|*.ds|" };
 
 	CFileDialog dlg(FALSE, CString(".ds"), NULL, 0, CString(strFilter));
 	CString fileName;
@@ -607,3 +614,46 @@ void CPaintDlg::OnBnClickedOpen()
 	Invalidate();
 }
 
+
+
+void CPaintDlg::OnFileErasecurrentfile()
+{
+	figs.clear();
+	Invalidate();
+}
+
+
+void CPaintDlg::OnFileOpenfile()
+{
+	OnBnClickedOpen();
+}
+
+
+void CPaintDlg::OnFileSaveall()
+{
+	OnBnClickedSaveas();
+}
+
+
+void CPaintDlg::OnEditUndoctrl()
+{
+	OnBnClickedMfcbuttonUndo();
+}
+
+
+void CPaintDlg::OnEditRedoctrl()
+{
+	OnBnClickedMfcbuttonRedo();
+}
+
+
+void CPaintDlg::OnMove()
+{
+	OnBnClickedRadioMoveB5();
+}
+
+
+void CPaintDlg::OnDraw()
+{
+	OnBnClickedRadioDrawB6();
+}

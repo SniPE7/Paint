@@ -98,6 +98,14 @@ public:
 	afx_msg void OnBnClickedMfccolorbutton2();
 	afx_msg void OnBnClickedSaveas();
 	afx_msg void OnBnClickedOpen();
+	afx_msg void OnFileErasecurrentfile();
+	afx_msg void OnFileOpenfile();
+	afx_msg void OnFileSaveall();
+	afx_msg void OnEditUndoctrl();
+	afx_msg void OnEditRedoctrl();
+	afx_msg void OnEditDeletedel();
+	afx_msg void OnMove();
+	afx_msg void OnDraw();
 };
 
 #endif
