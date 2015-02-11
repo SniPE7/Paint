@@ -6,6 +6,9 @@
 #include "Paint.h"
 #include "PaintDlg.h"
 #include "afxdialogex.h"
+#include <math.h>
+#include <string>
+using std::string;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -274,12 +277,33 @@ void CPaintDlg::OnLButtonDown(UINT nFlags, CPoint point)
 	case MOVE:
 		for (list <Figure*>::const_reverse_iterator it = figs.rbegin(); it != figs.rend() && !(flag_found); ++it)
 		{
-			if (point.x >= (*it)->x1 && point.x <= (*it)->x2 && point.y >= (*it)->y1 && point.y <= (*it)->y2)     //If click on rectangle area
+			//if ((*it)->getFigureName().compare("Rectangle") || (*it)->getFigureName().compare("Ellipse"))
+			//{
+				if (point.x >= (*it)->x1 && point.x <= (*it)->x2 && point.y >= (*it)->y1 && point.y <= (*it)->y2)     //If click on rectangle area
+				{
+					flag_found = 1;
+					onPoint = point;
+					indexToMove = counter;
+				}
+		//	} 
+				/*
+			else //if ((*it)->getFigureName().compare("Ellipse"))
 			{
-				flag_found = 1;
-				onPoint = point;
-				indexToMove = counter;
-			}
+				
+				int width, height, dx, dy, cx, cy;
+				width = abs((*it)->x1 - (*it)->x2);
+				height = abs((*it)->y1 - (*it)->y2);
+				cx = width / 2;
+				cy = height / 2;
+				dx = point.x - cx;
+				dy = point.y - cy;
+
+				if (((dx * dx) / (width * width) + (dy * dy) / (height * height)) <= 1)
+				{
+					onPoint = point;
+					indexToMove = counter;
+				}
+			} */
 			counter++;
 		}
 		SetCapture();
@@ -317,6 +341,7 @@ void CPaintDlg::OnLButtonUp(UINT nFlags, CPoint point)
 
 	case MOVE:
 		isPressed = false;
+		/*
 		list <Figure*>::const_reverse_iterator it = figs.rbegin();
 		advance(it, indexToMove);
 		(*it)->x1 += (point.x - onPoint.x);             //Increase left-top and right-bot Points
@@ -324,7 +349,7 @@ void CPaintDlg::OnLButtonUp(UINT nFlags, CPoint point)
 		(*it)->y1 += (point.y - onPoint.y);
 		(*it)->y2 += (point.y - onPoint.y);
 		onPoint = point;
-		Invalidate();
+		Invalidate(); */
 		ReleaseCapture();
 		break;
 	}

@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "Figure.h"
+#include <string>
+using std::string;
 
 //!!5 b
 IMPLEMENT_SERIAL(Figure, CObject, 1)
