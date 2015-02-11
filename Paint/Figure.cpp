@@ -34,10 +34,7 @@ Figure::~Figure(void)
 {
 }
 
-string Figure::getFigureName()
-{
-	return "Figure";
-}
+
 //!!5
 RectangleM::RectangleM(){}
 RectangleM::RectangleM(const RectangleM &r) : Figure(r.x1, r.y1, r.x2, r.y2, r.fs){}
@@ -47,10 +44,7 @@ const RectangleM&RectangleM::operator=(const RectangleM &r)
 		RectangleM(r);
 	return *this;
 }
-string RectangleM::getFigureName()
-{
-	return "Rectangle";
-}
+
 
 //!!5
 EllipseM::EllipseM(){}
@@ -61,10 +55,7 @@ const EllipseM&EllipseM::operator=(const EllipseM &e)
 		EllipseM(e);
 	return *this;
 }
-string EllipseM::getFigureName()
-{
-	return "Ellipse";
-}
+
 
 LineM::LineM(){}
 LineM::LineM(const LineM &l) : Figure(l.x1, l.y1, l.x2, l.y2, l.fs){}
@@ -75,7 +66,3 @@ const LineM&LineM::operator=(const LineM &l)
 	return *this;
 }
 
-string LineM::getFigureName()
-{
-	return "Line";
-}
