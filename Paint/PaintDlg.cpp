@@ -1,7 +1,7 @@
 
 // PaintDlg.cpp : implementation file
 //
-
+//
 #include "stdafx.h"
 #include "Paint.h"
 #include "PaintDlg.h"
