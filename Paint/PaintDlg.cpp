@@ -6,6 +6,9 @@
 #include "Paint.h"
 #include "PaintDlg.h"
 #include "afxdialogex.h"
+#include <math.h>
+#include <string>
+using std::string;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -253,20 +256,45 @@ void CPaintDlg::OnLButtonDown(UINT nFlags, CPoint point)
 	indexToMove = -1;
 	int counter, flag_found;
 	counter = flag_found = 0;
-	
+
 	switch (actionKind)
 	{
 	case DRAW:
 		endP = startP = point;
 		break;
 	case MOVE:
-		for (list <Figure*>::const_reverse_iterator it = figs.rbegin(); it != figs.rend() && !(flag_found); ++it)
+		for (list <Figure*>::const_reverse_iterator it = figs.rbegin(); it != figs.rend() && (indexToMove == -1); ++it)
 		{
-			if (point.x >= (*it)->x1 && point.x <= (*it)->x2 && point.y >= (*it)->y1 && point.y <= (*it)->y2)     //If click on rectangle area
+			if ((*it)->getFigureName().compare("Rectangle") == 0)
 			{
-				flag_found = 1;
-				onPoint = point;
-				indexToMove = counter;
+				if (point.x >= (*it)->x1 && point.x <= (*it)->x2 && point.y >= (*it)->y1 && point.y <= (*it)->y2)     //If click on rectangle area
+				{
+					//flag_found = 1;
+					onPoint = point;
+					indexToMove = counter;
+				}
+			}
+			else if ((*it)->getFigureName().compare("Ellipse") == 0)
+			{
+				int a, b;
+				a = abs((*it)->x2 - (*it)->x1) / 2;
+				b = abs((*it)->y2 - (*it)->y1) / 2;
+				if (a > b)
+				{
+					if ((((point.x*point.x) / (a*a)) + ((point.y*point.y) / (b*b))) <= 1)
+					{
+						onPoint = point;
+						indexToMove = counter;
+					}
+				}
+				else if (a < b)
+				{
+					if ((((point.x*point.x) / (b*b)) + ((point.y*point.y) / (a*a))) <= 1)
+					{
+						onPoint = point;
+						indexToMove = counter;
+					}
+				} 
 			}
 			counter++;
 		}
@@ -305,14 +333,14 @@ void CPaintDlg::OnLButtonUp(UINT nFlags, CPoint point)
 
 	case MOVE:
 		isPressed = false;
-		list <Figure*>::const_reverse_iterator it = figs.rbegin();
-		advance(it, indexToMove);
-		(*it)->x1 += (point.x - onPoint.x);             //Increase left-top and right-bot Points
-		(*it)->x2 += (point.x - onPoint.x);
-		(*it)->y1 += (point.y - onPoint.y);
-		(*it)->y2 += (point.y - onPoint.y);
-		onPoint = point;
-		Invalidate();
+		//list <Figure*>::const_reverse_iterator it = figs.rbegin();
+		//advance(it, indexToMove);
+		//(*it)->x1 += (point.x - onPoint.x);             //Increase left-top and right-bot Points
+		//(*it)->x2 += (point.x - onPoint.x);
+		//(*it)->y1 += (point.y - onPoint.y);
+	//	(*it)->y2 += (point.y - onPoint.y);
+	//	onPoint = point;
+	//	Invalidate();
 		ReleaseCapture();
 		break;
 	}
@@ -330,12 +358,15 @@ void CPaintDlg::OnMouseMove(UINT nFlags, CPoint point)
 		{
 			list <Figure*>::const_reverse_iterator it = figs.rbegin();
 			advance(it,indexToMove);
-			(*it)->x1 += (point.x - onPoint.x);             //Increase left-top and right-bot Points
-			(*it)->x2 += (point.x - onPoint.x);
-			(*it)->y1 += (point.y - onPoint.y);
-			(*it)->y2 += (point.y - onPoint.y);
-			onPoint = point;
-			Invalidate();   //Invalidate the screeen 
+			if (((*it)->getFigureName().compare("Rectangle") == 0) || ((*it)->getFigureName().compare("Ellipse") == 0))
+			{
+				(*it)->x1 += (point.x - onPoint.x);             //Increase left-top and right-bot Points
+				(*it)->x2 += (point.x - onPoint.x);
+				(*it)->y1 += (point.y - onPoint.y);
+				(*it)->y2 += (point.y - onPoint.y);
+				onPoint = point;
+				Invalidate();   //Invalidate the screeen 
+			}
 		}
 		break;
 	case DRAW:
@@ -515,3 +546,7 @@ void CPaintDlg::OnBnClickedMfccolorbutton2()
 	if (dlgColors.DoModal() == IDOK)
 		m_ChoosedColorB = dlgColors.GetColor();
 }
+
+
+
+

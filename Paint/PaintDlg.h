@@ -40,6 +40,8 @@ class CPaintDlg : public CDialogEx
 	CPoint endP;
 	CPoint onPoint;
 	int indexToMove;
+
+	//int selectedFigure;
 	// added e
 	// Construction
 // Construction
@@ -94,6 +96,7 @@ public:
 	afx_msg void OnCbnSelchangeCombo1();
 	int frameSize;
 	afx_msg void OnBnClickedMfccolorbutton2();
+
 };
 
 #endif
