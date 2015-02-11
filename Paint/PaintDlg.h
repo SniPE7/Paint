@@ -30,6 +30,8 @@ class CPaintDlg : public CDialogEx
 	//!!6 b
 	//vector <Figure *> figs;
 	//CTypedPtrArray< CObArray, Figure*> figs;
+	CTypedPtrArray< CObArray, Figure*> figs_arr;
+
 	list <Figure*> figs;
 	//stack <Figure*> figsRecycleBin;
 	list <Figure*> figsRecycleBin;
@@ -94,6 +96,8 @@ public:
 	afx_msg void OnCbnSelchangeCombo1();
 	int frameSize;
 	afx_msg void OnBnClickedMfccolorbutton2();
+	afx_msg void OnBnClickedSaveas();
+	afx_msg void OnBnClickedOpen();
 };
 
 #endif

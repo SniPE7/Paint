@@ -4,7 +4,6 @@
 // #endif
 // use:
 #pragma once   
-#include <string.h>
 
 //!!5 for Serialization
 class Figure : public CObject
@@ -60,7 +59,7 @@ public:
 
 class RectangleM :public Figure{
 	//!!5 b
-	//DECLARE_SERIAL(RectangleM)   //!!! NO ";"     
+	DECLARE_SERIAL(RectangleM)   //!!! NO ";"     
 	//!!5 e
 public:
 	RectangleM(); //!!5 must 
@@ -112,7 +111,7 @@ public:
 
 class LineM :public Figure{
 	//!!5 b
-	//DECLARE_SERIAL(LineM)   //!!! NO ";"     
+	DECLARE_SERIAL(LineM)   //!!! NO ";"     
 	//!!5 e
 public:
 	LineM();  //!!5 must

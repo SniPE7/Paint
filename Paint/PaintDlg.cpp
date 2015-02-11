@@ -87,6 +87,8 @@ BEGIN_MESSAGE_MAP(CPaintDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_RADIO_DRAW_B6, &CPaintDlg::OnBnClickedRadioDrawB6)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CPaintDlg::OnCbnSelchangeCombo1)
 	ON_BN_CLICKED(IDC_MFCCOLORBUTTON2, &CPaintDlg::OnBnClickedMfccolorbutton2)
+	ON_BN_CLICKED(IDSAVEAS, &CPaintDlg::OnBnClickedSaveas)
+	ON_BN_CLICKED(IDOPEN, &CPaintDlg::OnBnClickedOpen)
 END_MESSAGE_MAP()
 
 
@@ -185,11 +187,13 @@ void CPaintDlg::OnPaint()
 	dc.SelectObject(oldFont);
 
 	CBrush myBrush, *oldBrush;
+	
+	CPen myPen1(PS_SOLID, frameSize, m_ChoosedColorB); //Frame size and color
+	CPen *oldPen;
+
 	myBrush.CreateSolidBrush(m_ChoosedColor); //Figures color
 	oldBrush = dc.SelectObject(&myBrush);
 
-	CPen myPen1(PS_SOLID, frameSize, m_ChoosedColorB); //Frame size and color
-	CPen *oldPen;
 	oldPen = dc.SelectObject(&myPen1);
 	dc.SetROP2(R2_NOTXORPEN);
 
@@ -202,8 +206,8 @@ void CPaintDlg::OnPaint()
 	//1st
 	for (list <Figure*>::const_iterator it = figs.begin(); it != figs.end(); it++)
 		(*it)->Draw(&dc);
-	//for (int i = 0; i<figs.GetSize(); i++)
-	//	figs[i]->Draw(&dc);
+	//for (int i = 0; i<figs_arr.GetSize(); i++)
+	//	figs_arr[i]->Draw(&dc);
 	//if creation
 	if (isPressed)
 	{
@@ -229,7 +233,7 @@ void CPaintDlg::OnPaint()
 		int y = (rect.Height() - cyIcon + 1) / 2;
 
 		// Draw the icon
-		dc.DrawIcon(x, y, m_hIcon);
+		//dc.DrawIcon(x, y, m_hIcon);
 	}
 	else
 	{
@@ -487,6 +491,14 @@ void CPaintDlg::OnBnClickedMfccolorbutton1()
 		m_ChoosedColor = dlgColors.GetColor();
 }
 
+void CPaintDlg::OnBnClickedMfccolorbutton2()
+{
+	CMFCColorDialog dlgColors;
+
+	if (dlgColors.DoModal() == IDOK)
+		m_ChoosedColorB = dlgColors.GetColor();
+}
+
 
 void CPaintDlg::OnBnClickedRadioMoveB5()
 {
@@ -508,10 +520,57 @@ void CPaintDlg::OnCbnSelchangeCombo1()
 }
 
 
-void CPaintDlg::OnBnClickedMfccolorbutton2()
-{
-	CMFCColorDialog dlgColors;
 
-	if (dlgColors.DoModal() == IDOK)
-		m_ChoosedColorB = dlgColors.GetColor();
+
+
+void CPaintDlg::OnBnClickedSaveas()
+{
+	for (list <Figure*>::const_iterator it = figs.begin(); it != figs.end(); it++)
+		figs_arr.Add(*it);
+
+	char strFilter[] = { "Den & Stat Format (*.ds)|*.ds|" };
+
+	CFileDialog dlg(FALSE, CString(".ds"), NULL, 0, CString(strFilter));
+	CString fileName;
+
+	if (IDOK == dlg.DoModal())
+	{
+		fileName = dlg.m_ofn.lpstrFile;
+	}
+	
+
+	CFile file(fileName, CFile::modeCreate | CFile::modeWrite);
+	CArchive ar(&file, CArchive::store);
+	figs_arr.Serialize(ar);
+	ar.Close();
+	file.Close();
 }
+
+
+void CPaintDlg::OnBnClickedOpen()
+{
+	CFileDialog dlg(TRUE);
+	CString fileName;
+
+	if (IDOK == dlg.DoModal())
+	{
+		fileName = dlg.m_ofn.lpstrFile;
+		
+	}
+	CFile file(fileName, CFile::modeRead);
+	CArchive ar(&file, CArchive::load);
+	figs_arr.Serialize(ar);
+	ar.Close();
+	file.Close();
+
+	int i = 0;
+	while (i<figs_arr.GetSize())
+	{
+		figs.push_back(figs_arr[i]);
+		i++;
+	}
+
+	
+	Invalidate();
+}
+
