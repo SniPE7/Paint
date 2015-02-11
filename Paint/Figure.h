@@ -79,11 +79,6 @@ public:
 		dc->Rectangle(x1, y1, x2, y2);
 	}
 	string getFigureName();
-	/*
-	string getFigureName()
-	{
-		return "Rectangle";
-	} */
 };
 
 class EllipseM :public Figure{
@@ -106,11 +101,6 @@ public:
 		dc->Ellipse(x1, y1, x2, y2);
 	}
 	string getFigureName();
-	/*
-	string getFigureName()
-	{
-		return "Ellipse";
-	*/
 };
 
 class LineM :public Figure{
@@ -132,9 +122,5 @@ public:
 		dc->LineTo(x1, y2);
 	}
 	string getFigureName();
-	/*
-	string getFigureName()
-	{
-		return "Line";
-	}*/
+	
 };

@@ -35,6 +35,11 @@ const Figure&Figure::operator=(const Figure &f)
 Figure::~Figure(void)
 {
 }
+string Figure::getFigureName()
+{
+	return "Figure";
+}
+
 
 
 //!!5
@@ -46,6 +51,11 @@ const RectangleM&RectangleM::operator=(const RectangleM &r)
 		RectangleM(r);
 	return *this;
 }
+string RectangleM::getFigureName()
+{
+	return "Rectangle";
+}
+
 
 
 //!!5
@@ -57,6 +67,11 @@ const EllipseM&EllipseM::operator=(const EllipseM &e)
 		EllipseM(e);
 	return *this;
 }
+string EllipseM::getFigureName()
+{
+	return "Ellipse";
+}
+
 
 
 LineM::LineM(){}
@@ -66,5 +81,9 @@ const LineM&LineM::operator=(const LineM &l)
 	if (&l != this)
 		LineM(l);
 	return *this;
+}
+string LineM::getFigureName()
+{
+	return "Line";
 }
 
