@@ -97,7 +97,7 @@ END_MESSAGE_MAP()
 BOOL CPaintDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-	m_ChoosedColor = RGB(0, 0, 0);
+	m_ChoosedColor = RGB(255, 255, 255);
 	m_ChoosedColorB = RGB(0, 0, 0);
 
 
@@ -174,6 +174,7 @@ void CPaintDlg::OnSysCommand(UINT nID, LPARAM lParam)
 
 void CPaintDlg::OnPaint()
 {
+	int bS = 1;
 	CRect rect;
 	GetClientRect(&rect);
 
@@ -188,24 +189,23 @@ void CPaintDlg::OnPaint()
 
 	CBrush myBrush, *oldBrush;
 	
-	CPen myPen1(PS_SOLID, frameSize, m_ChoosedColorB); //Frame size and color
+	
 	CPen *oldPen;
 
 	myBrush.CreateSolidBrush(m_ChoosedColor); //Figures color
 	oldBrush = dc.SelectObject(&myBrush);
 
+	CPen myPen1(PS_SOLID, frameSize, m_ChoosedColorB); //Frame size and color
 	oldPen = dc.SelectObject(&myPen1);
-	dc.SetROP2(R2_NOTXORPEN);
-
-	dc.MoveTo(startP);
-	dc.LineTo(endP.x, endP.y);
-	//dc.SelectObject(oldPen);
-	dc.SetROP2(R2_COPYPEN);
-
+	
+	
 	//!!2
 	//1st
 	for (list <Figure*>::const_iterator it = figs.begin(); it != figs.end(); it++)
+	{
 		(*it)->Draw(&dc);
+	}
+		
 	//for (int i = 0; i<figs_arr.GetSize(); i++)
 	//	figs_arr[i]->Draw(&dc);
 	//if creation
@@ -216,7 +216,15 @@ void CPaintDlg::OnPaint()
 		dc.LineTo(endP.x, endP.y);
 		dc.LineTo(endP.x, startP.y);
 		dc.LineTo(startP.x, startP.y);
+		dc.SetROP2(R2_NOTXORPEN);
+
+		dc.MoveTo(startP);
+		dc.LineTo(endP.x, endP.y);
+		//dc.SelectObject(oldPen);
+		dc.SetROP2(R2_COPYPEN);
 	}
+
+	
 
 	if (IsIconic())
 	{
