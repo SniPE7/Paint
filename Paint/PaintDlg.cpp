@@ -6,9 +6,6 @@
 #include "Paint.h"
 #include "PaintDlg.h"
 #include "afxdialogex.h"
-#include <math.h>
-#include <string>
-using std::string;
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -90,6 +87,8 @@ BEGIN_MESSAGE_MAP(CPaintDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_RADIO_DRAW_B6, &CPaintDlg::OnBnClickedRadioDrawB6)
 	ON_CBN_SELCHANGE(IDC_COMBO1, &CPaintDlg::OnCbnSelchangeCombo1)
 	ON_BN_CLICKED(IDC_MFCCOLORBUTTON2, &CPaintDlg::OnBnClickedMfccolorbutton2)
+	ON_BN_CLICKED(IDSAVEAS, &CPaintDlg::OnBnClickedSaveas)
+	ON_BN_CLICKED(IDOPEN, &CPaintDlg::OnBnClickedOpen)
 END_MESSAGE_MAP()
 
 
@@ -98,7 +97,7 @@ END_MESSAGE_MAP()
 BOOL CPaintDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-	m_ChoosedColor = RGB(0, 0, 0);
+	m_ChoosedColor = RGB(255, 255, 255);
 	m_ChoosedColorB = RGB(0, 0, 0);
 
 
@@ -175,6 +174,7 @@ void CPaintDlg::OnSysCommand(UINT nID, LPARAM lParam)
 
 void CPaintDlg::OnPaint()
 {
+	int bS = 1;
 	CRect rect;
 	GetClientRect(&rect);
 
@@ -188,25 +188,26 @@ void CPaintDlg::OnPaint()
 	dc.SelectObject(oldFont);
 
 	CBrush myBrush, *oldBrush;
+	
+	
+	CPen *oldPen;
+
 	myBrush.CreateSolidBrush(m_ChoosedColor); //Figures color
 	oldBrush = dc.SelectObject(&myBrush);
 
 	CPen myPen1(PS_SOLID, frameSize, m_ChoosedColorB); //Frame size and color
-	CPen *oldPen;
 	oldPen = dc.SelectObject(&myPen1);
-	dc.SetROP2(R2_NOTXORPEN);
-
-	dc.MoveTo(startP);
-	dc.LineTo(endP.x, endP.y);
-	//dc.SelectObject(oldPen);
-	dc.SetROP2(R2_COPYPEN);
-
+	
+	
 	//!!2
 	//1st
 	for (list <Figure*>::const_iterator it = figs.begin(); it != figs.end(); it++)
+	{
 		(*it)->Draw(&dc);
-	//for (int i = 0; i<figs.GetSize(); i++)
-	//	figs[i]->Draw(&dc);
+	}
+		
+	//for (int i = 0; i<figs_arr.GetSize(); i++)
+	//	figs_arr[i]->Draw(&dc);
 	//if creation
 	if (isPressed)
 	{
@@ -215,7 +216,15 @@ void CPaintDlg::OnPaint()
 		dc.LineTo(endP.x, endP.y);
 		dc.LineTo(endP.x, startP.y);
 		dc.LineTo(startP.x, startP.y);
+		dc.SetROP2(R2_NOTXORPEN);
+
+		dc.MoveTo(startP);
+		dc.LineTo(endP.x, endP.y);
+		//dc.SelectObject(oldPen);
+		dc.SetROP2(R2_COPYPEN);
 	}
+
+	
 
 	if (IsIconic())
 	{
@@ -232,7 +241,7 @@ void CPaintDlg::OnPaint()
 		int y = (rect.Height() - cyIcon + 1) / 2;
 
 		// Draw the icon
-		dc.DrawIcon(x, y, m_hIcon);
+		//dc.DrawIcon(x, y, m_hIcon);
 	}
 	else
 	{
@@ -256,45 +265,20 @@ void CPaintDlg::OnLButtonDown(UINT nFlags, CPoint point)
 	indexToMove = -1;
 	int counter, flag_found;
 	counter = flag_found = 0;
-
+	
 	switch (actionKind)
 	{
 	case DRAW:
 		endP = startP = point;
 		break;
 	case MOVE:
-		for (list <Figure*>::const_reverse_iterator it = figs.rbegin(); it != figs.rend() && (indexToMove == -1); ++it)
+		for (list <Figure*>::const_reverse_iterator it = figs.rbegin(); it != figs.rend() && !(flag_found); ++it)
 		{
-			if ((*it)->getFigureName().compare("Rectangle") == 0)
+			if (point.x >= (*it)->x1 && point.x <= (*it)->x2 && point.y >= (*it)->y1 && point.y <= (*it)->y2)     //If click on rectangle area
 			{
-				if (point.x >= (*it)->x1 && point.x <= (*it)->x2 && point.y >= (*it)->y1 && point.y <= (*it)->y2)     //If click on rectangle area
-				{
-					//flag_found = 1;
-					onPoint = point;
-					indexToMove = counter;
-				}
-			}
-			else if ((*it)->getFigureName().compare("Ellipse") == 0)
-			{
-				int a, b;
-				a = abs((*it)->x2 - (*it)->x1) / 2;
-				b = abs((*it)->y2 - (*it)->y1) / 2;
-				if (a > b)
-				{
-					if ((((point.x*point.x) / (a*a)) + ((point.y*point.y) / (b*b))) <= 1)
-					{
-						onPoint = point;
-						indexToMove = counter;
-					}
-				}
-				else if (a < b)
-				{
-					if ((((point.x*point.x) / (b*b)) + ((point.y*point.y) / (a*a))) <= 1)
-					{
-						onPoint = point;
-						indexToMove = counter;
-					}
-				} 
+				flag_found = 1;
+				onPoint = point;
+				indexToMove = counter;
 			}
 			counter++;
 		}
@@ -333,14 +317,14 @@ void CPaintDlg::OnLButtonUp(UINT nFlags, CPoint point)
 
 	case MOVE:
 		isPressed = false;
-		//list <Figure*>::const_reverse_iterator it = figs.rbegin();
-		//advance(it, indexToMove);
-		//(*it)->x1 += (point.x - onPoint.x);             //Increase left-top and right-bot Points
-		//(*it)->x2 += (point.x - onPoint.x);
-		//(*it)->y1 += (point.y - onPoint.y);
-	//	(*it)->y2 += (point.y - onPoint.y);
-	//	onPoint = point;
-	//	Invalidate();
+		list <Figure*>::const_reverse_iterator it = figs.rbegin();
+		advance(it, indexToMove);
+		(*it)->x1 += (point.x - onPoint.x);             //Increase left-top and right-bot Points
+		(*it)->x2 += (point.x - onPoint.x);
+		(*it)->y1 += (point.y - onPoint.y);
+		(*it)->y2 += (point.y - onPoint.y);
+		onPoint = point;
+		Invalidate();
 		ReleaseCapture();
 		break;
 	}
@@ -358,15 +342,12 @@ void CPaintDlg::OnMouseMove(UINT nFlags, CPoint point)
 		{
 			list <Figure*>::const_reverse_iterator it = figs.rbegin();
 			advance(it,indexToMove);
-			if (((*it)->getFigureName().compare("Rectangle") == 0) || ((*it)->getFigureName().compare("Ellipse") == 0))
-			{
-				(*it)->x1 += (point.x - onPoint.x);             //Increase left-top and right-bot Points
-				(*it)->x2 += (point.x - onPoint.x);
-				(*it)->y1 += (point.y - onPoint.y);
-				(*it)->y2 += (point.y - onPoint.y);
-				onPoint = point;
-				Invalidate();   //Invalidate the screeen 
-			}
+			(*it)->x1 += (point.x - onPoint.x);             //Increase left-top and right-bot Points
+			(*it)->x2 += (point.x - onPoint.x);
+			(*it)->y1 += (point.y - onPoint.y);
+			(*it)->y2 += (point.y - onPoint.y);
+			onPoint = point;
+			Invalidate();   //Invalidate the screeen 
 		}
 		break;
 	case DRAW:
@@ -518,6 +499,14 @@ void CPaintDlg::OnBnClickedMfccolorbutton1()
 		m_ChoosedColor = dlgColors.GetColor();
 }
 
+void CPaintDlg::OnBnClickedMfccolorbutton2()
+{
+	CMFCColorDialog dlgColors;
+
+	if (dlgColors.DoModal() == IDOK)
+		m_ChoosedColorB = dlgColors.GetColor();
+}
+
 
 void CPaintDlg::OnBnClickedRadioMoveB5()
 {
@@ -539,14 +528,57 @@ void CPaintDlg::OnCbnSelchangeCombo1()
 }
 
 
-void CPaintDlg::OnBnClickedMfccolorbutton2()
-{
-	CMFCColorDialog dlgColors;
 
-	if (dlgColors.DoModal() == IDOK)
-		m_ChoosedColorB = dlgColors.GetColor();
+
+
+void CPaintDlg::OnBnClickedSaveas()
+{
+	for (list <Figure*>::const_iterator it = figs.begin(); it != figs.end(); it++)
+		figs_arr.Add(*it);
+
+	char strFilter[] = { "Den & Stat Format (*.ds)|*.ds|" };
+
+	CFileDialog dlg(FALSE, CString(".ds"), NULL, 0, CString(strFilter));
+	CString fileName;
+
+	if (IDOK == dlg.DoModal())
+	{
+		fileName = dlg.m_ofn.lpstrFile;
+	}
+	
+
+	CFile file(fileName, CFile::modeCreate | CFile::modeWrite);
+	CArchive ar(&file, CArchive::store);
+	figs_arr.Serialize(ar);
+	ar.Close();
+	file.Close();
 }
 
 
+void CPaintDlg::OnBnClickedOpen()
+{
+	CFileDialog dlg(TRUE);
+	CString fileName;
 
+	if (IDOK == dlg.DoModal())
+	{
+		fileName = dlg.m_ofn.lpstrFile;
+		
+	}
+	CFile file(fileName, CFile::modeRead);
+	CArchive ar(&file, CArchive::load);
+	figs_arr.Serialize(ar);
+	ar.Close();
+	file.Close();
+
+	int i = 0;
+	while (i<figs_arr.GetSize())
+	{
+		figs.push_back(figs_arr[i]);
+		i++;
+	}
+
+	
+	Invalidate();
+}
 
